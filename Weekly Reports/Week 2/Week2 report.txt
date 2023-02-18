@@ -19,7 +19,7 @@ Amogh:
 -Learnt about Prometheus and Node Server
 -Installed VMWare, Ubuntu and Fedora successfully on laptop
 -Installed Prometheus on Ubuntu
--A Prometheus command was run to check the metrics, status and graph on localhost.
+-A Prometheus and Node Exporter command was run to check the metrics, status and graph on localhost.
 
 Sakshya:
 -Learnt how to automate a web browser with selenium
