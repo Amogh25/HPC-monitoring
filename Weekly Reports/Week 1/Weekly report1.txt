@@ -1,0 +1,10 @@
+Week1 Progress:
+>Firstly, there was a brief understanding of the project-HPC MONITORING
+>A GitHub repository was created by Amogh for storing the project essentials.
+>Each team member took up a task.
+>Vishwadatta gave a brief about how grafana is going to be used in the project.
+>Amogh shared information on prometheus and node exporter contribution in the project.
+>Brinda explained the role of Kafka in the project.
+>Bhargavi and Sakshya presented a demo on Login Automation in GitHub using Selenium Webdriver.
+>Lastly,discussion about what could be the possible deliverables was made.
+
