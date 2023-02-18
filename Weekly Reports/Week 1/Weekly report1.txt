@@ -6,5 +6,4 @@ Week1 Progress:
 >Amogh shared information on prometheus and node exporter contribution in the project.
 >Brinda explained the role of Kafka in the project.
 >Bhargavi and Sakshya presented a demo on Login Automation in GitHub using Selenium Webdriver.
->Lastly,discussion about what could be the possible deliverables was made.
-
+>Lastly,discussion about what could be the possible deliverables was made
