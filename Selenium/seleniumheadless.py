@@ -10,7 +10,7 @@ user="xxx"
 pw ="yyy"
 op = webdriver.ChromeOptions()
 op.add_argument('headless')
-driver = webdriver.Chrome(options=op)
+driver = webdriver.Chrome()
 driver.maximize_window()
 
 driver.get("https://github.com/login")
