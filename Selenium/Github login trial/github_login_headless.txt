@@ -1,0 +1,7 @@
+ - Using selenium IDE record web interactions and export code
+ - Using these scripts we can playback tests to manually step through repititive tasks
+ - To avoid consuming screen time and slow-rendering of the user interface these tests are run in a headless mode
+ - code:
+       op = webdriver.ChromeOptions()
+       op.add_argument('headless')
+       driver = webdriver.Chrome(options=op)
