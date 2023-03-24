@@ -4,7 +4,7 @@ Vishwadatta:
 -VM ware,ubuntu,fedora installed for system.
 -solved the issues related to installation of grafana to linux.
 -ran grafana and prometheus but no results were obtained.
--ubuntu crashed due to unkown reason(yet to be solved).
+-ubuntu crashed due to unkown reason.
 -installed grafana and set up admin and view only users in windows.
 -installed prometheus for windows and visualised some self metrices.
 -installed windows exporter and configured yml file for setting Windows expoter as target.
