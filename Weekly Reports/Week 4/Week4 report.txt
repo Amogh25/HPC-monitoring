@@ -1,0 +1,11 @@
+Week 4 Progress:
+
+-Firstly,we wrote a framework code that generates the numeric metrics like Disk I/O from kafka producer and it was read back by a consumer console.
+-The same was demonstrated in the meeting.
+-Then a selenium framework code was written to verify the similar type of grafana panels.
+-The code was demonstrated for the following criteria:
+	a.Two different metrics to be represented in graphs.
+	b.Two different metrics to be represented in gauge.
+-Faced issues while writing the above code.
+-The necessary steps for troubleshooting was taken.
+-Finally the next upcoming tasks were discussed.
