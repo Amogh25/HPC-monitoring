@@ -1,0 +1,2 @@
+1. Look at making the code modular, so that is easy to explain the important parts of test_graph, test_gauge.
+2. The signin code and dashboard launch is common across all the files. Get them to a common function or re-use.
