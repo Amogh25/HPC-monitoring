@@ -17,7 +17,7 @@ class TestStat():
   def setup_method(self):
     options=webdriver.ChromeOptions()
     options.add_argument("headless")
-    path = "/home/sasha/projects/Selenium/panel-info"
+    path = "/home/sasha/projects/Selenium/panel-data"
     prefs = {"download.default_directory" : path }
     options.add_experimental_option("prefs",prefs)
     self.driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'),options=options)
