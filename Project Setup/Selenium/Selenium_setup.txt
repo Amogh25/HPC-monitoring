@@ -1,1 +1,15 @@
+Selenium setup steps
 
+1. Installed the latest version of zip file of selenium webdriver for chrome from the official webpage of ChromeDriver.
+2. Extracted an executable file from the previously downloaded chromedriver_linux64.zip file.
+3. Installed the Selenium IDE on Chrome.
+
+
+Running the Selenium tests
+
+1. Created a new project using the Selenium IDE and provided the url of the Grafana login page as a start point.
+2. Started recording the process of logging in, fetching the json file of the Node Exporter Full dashboard and finally extracting the data from the panels in the form of CSV file.
+3. Saved the recorded test.
+4. Exported the test in the python language and saved the test as .py file.
+5. Made changes in the code as per the necessary requirements.
+6. Ran the tests in the headless mode and were validated.
