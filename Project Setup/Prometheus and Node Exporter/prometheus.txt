@@ -1,1 +1,79 @@
+Prometheus installation
+
+1. Go to Download Page of Prometheus and select the prometheus-version.linux-amd64.tar.gz file for download.
+-> sudo wget https://github.com/prometheus/prometheus/releases/download/v2.22.0/prometheus-2.22.0.linux-amd64.tar.gz
+
+2. Untar/Extract the downloaded binary file using following command
+-> sudo tar xvfz prometheus-version.linux-amd64.tar.gz
+
+3. Go to the extracted directory 
+-> cd prometheus-version.linux-amd64.tar.gz
+
+Prometheus Setup
+
+4. Create a Prometheus user, required directories, and make Prometheus the user as the owner of those directories using following commands.
+-> sudo useradd --no-create-home --shell /bin/false prometheus
+   sudo mkdir /etc/prometheus
+   sudo mkdir /var/lib/prometheus
+   sudo chown prometheus:prometheus /etc/prometheus
+   sudo chown prometheus:prometheus /var/lib/prometheus
+
+5. Copy prometheus and promtool binary from prometheus-files folder to /usr/local/bin and change the ownership to prometheus user using following commands.
+-> sudo cp prometheus-files/prometheus /usr/local/bin/
+   sudo cp prometheus-files/promtool /usr/local/bin/
+   sudo chown prometheus:prometheus /usr/local/bin/prometheus
+   sudo chown prometheus:prometheus /usr/local/bin/promtool
+
+6. Move the consoles and console_libraries directories from prometheus-files to /etc/prometheus folder and change the ownership to prometheus user using following commands.
+-> sudo cp -r prometheus-files/consoles /etc/prometheus
+   sudo cp -r prometheus-files/console_libraries /etc/prometheus
+   sudo chown -R prometheus:prometheus /etc/prometheus/consoles
+   sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries
+
+7. Create the prometheus.yml file.
+-> sudo vim /etc/prometheus/prometheus.yml
+
+8. Copy the following contents to the prometheus.yml file.
+-> global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+9. Change the ownership of the file to prometheus user.
+-> sudo chown prometheus:prometheus /etc/prometheus/prometheus.yml
+
+Prometheus Service file Setup
+
+10. Create a prometheus service file using following command.
+-> sudo vim /etc/systemd/system/prometheus.service
+
+11. Copy the following content to the service file.
+-> [Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+    --config.file /etc/prometheus/prometheus.yml \
+    --storage.tsdb.path /var/lib/prometheus/ \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries
+
+[Install]
+WantedBy=multi-user.target
+
+12. Reload the systemd service and start the prometheus service.
+-> sudo systemctl daemon-reload
+   sudo systemctl start prometheus
+
+13. Check the status of prometheus service using following command.
+-> sudo systemctl status prometheus
 
