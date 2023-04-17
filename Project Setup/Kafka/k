@@ -1,1 +1,55 @@
-.
+  Restart=on-abnormal
+
+  [Install]
+  WantedBy=multi-user.target
+
+b.Next, create a systemd unit file for the Kafka service:
+  - sudo nano /etc/systemd/system/kafka.service 
+
+  Add the below content. 
+  Make sure to set the correct JAVA_HOME path as per the Java installed on your system.
+
+  [Unit]
+  Description=Apache Kafka Server
+  Documentation=http://kafka.apache.org/documentation.html
+  Requires=zookeeper.service
+
+  [Service]
+  Type=simple
+  Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64"
+  ExecStart=/usr/local/kafka/bin/kafka-server-start.sh /usr/local/kafka/config/server.properties
+  ExecStop=/usr/local/kafka/bin/kafka-server-stop.sh
+
+  [Install]
+  WantedBy=multi-user.target
+
+c.Reload the systemd daemon to apply new changes.
+  - sudo systemctl daemon-reload 
+
+4.Start the ZooKeeper service and then start Kafka.Use the systemctl command to start a single-node ZooKeeper instance.
+- sudo systemctl start zookeeper 
+- sudo systemctl start kafka 
+
+ Verify both of the services status:
+ - sudo systemctl status zookeeper 
+ - sudo systemctl status kafka 
+
+5.Create a Topic in Kafka:
+- cd /usr/local/kafka 
+- bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic testTopic 
+
+6.Send and Receive Messages in Kafka.
+
+a.The â€œproducerâ€ is the process responsible for put data into our Kafka. The Kafka comes with a command-line client that will take input from a file or from standard input and send it out as messages to the Kafka cluster.
+
+To run a producer:
+- bin/kafka-console-producer.sh --broker-list localhost:9092 --topic testTopic 
+
+You can exit this command or keep this terminal running for further testing.
+
+b.Kafka also has a command-line consumer to read data from the Kafka cluster and display messages to standard output.
+
+To run a consumer:
+- bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic testTopic --from-beginning
+
+Now, If you have still running Kafka producer in another terminal. Just type some text on that producer terminal. it will immediately be visible on the consumer terminal.
