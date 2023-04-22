@@ -1,6 +1,8 @@
 import time
 import json
 import os
+import pandas as pd
+import csv
 import shutil
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -24,7 +26,7 @@ class TestJsonfinal():
 
     def test_jsonfinal(self):
 
-        directory = "download_directory"
+        directory = "directory_path"
 
         file_list = os.listdir(directory)
 
@@ -34,8 +36,8 @@ class TestJsonfinal():
                 os.remove(filepath)
                 print(f"{filename} deleted successfully")
 
-        user = "admin"
-        password = "admin"
+        user = "user_name"
+        password = "password"
         self.driver.get("http://localhost:3000/d/rYdddlPWk/node-exporter-full?orgId=1/login")
         self.driver.find_element(By.NAME, "user").send_keys(user)
         self.driver.find_element(By.ID, "current-password").click()
@@ -63,7 +65,7 @@ class TestJsonfinal():
 
         #Read the recently downloaded json file
         
-        directory = "downloaded_directory"
+        directory = "directory_path"
 
         file_list = os.listdir(directory)
 
@@ -73,6 +75,8 @@ class TestJsonfinal():
         filepath = os.path.join(directory, latest_file)
 
         print(filepath)
+
+        #Grouping the panels
 
         data = json.load(open(filepath))
         gauge_list = []
@@ -92,34 +96,63 @@ class TestJsonfinal():
                 url = "http://localhost:3000/d/rYdddlPW/node-exporter-f?orgId=1&editPanel=" + id + "&inspect=" + id
                 stat_list.append(url)
 
-        test_list = [time_series_list[0], time_series_list[1], gauge_list[0], gauge_list[1]]
-        for i in test_list:
-            self.driver.get(i)
-            time.sleep(2)
-            self.driver.execute_script("window.scrollTo(0,0)")
-            time.sleep(5)
-            element = self.driver.find_element(By.XPATH,
-                                               "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[1]/div[1]/div")
-            actions = ActionChains(self.driver)
-            actions.move_to_element(element).perform()
-            self.driver.find_element(By.XPATH,
-                                     "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[1]/div[1]/div/div").click()
-            self.driver.execute_script("window.scrollTo(0,0)")
-            time.sleep(1)
-            self.driver.find_element(By.CSS_SELECTOR, ".theme-dark").click()
-            time.sleep(3)
+        # Download the csv file of first panel in Time series list 
 
-            element = self.driver.find_element(By.XPATH,
-                                               "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div[1]/div[2]")
-            self.driver.execute_script("window.scrollTo(0,0)")
-            time.sleep(3)
-            element = self.driver.find_element(By.XPATH,
-                                               "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/button")
-            actions = ActionChains(self.driver)
-            actions.move_to_element(element).perform()
-            self.driver.find_element(By.XPATH,
-                                     "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/button/span").click()
-            time.sleep(3)
+        self.driver.get(time_series_list[0])
+        time.sleep(2)
+        self.driver.execute_script("window.scrollTo(0,0)")
+        time.sleep(5)
+        element = self.driver.find_element(By.XPATH,
+                                            "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[1]/div[1]/div")
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element).perform()
+        self.driver.find_element(By.XPATH,
+                                    "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[1]/div[1]/div/div").click()
+        self.driver.execute_script("window.scrollTo(0,0)")
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, ".theme-dark").click()
+        time.sleep(3)
+
+        element = self.driver.find_element(By.XPATH,
+                                            "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div[1]/div[2]")
+        self.driver.execute_script("window.scrollTo(0,0)")
+        time.sleep(3)
+        element = self.driver.find_element(By.XPATH,
+                                            "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/button")
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element).perform()
+        self.driver.find_element(By.XPATH,
+                                    "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/button/span").click()
+        time.sleep(3)
+
+        # Acceptance criteria and moving failed test cases to another csv file
+
+        directory = "directory_path"
+
+        csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+        csv_files.sort(key=lambda x: os.path.getmtime(os.path.join(directory, x)), reverse=True)
+
+        most_recent_csv = csv_files[0]
+
+        print("Recently downloaded CSV file:", most_recent_csv)
+
+        df = pd.read_csv(most_recent_csv)
+
+        print(df)
+
+        with open(most_recent_csv, 'r') as input_file, open('cpu_failed_tests.csv', 'w', newline='') as output_file:
+
+            reader = csv.reader(input_file)
+            writer = csv.writer(output_file)
+
+            header_row = next(reader)
+            writer.writerow(header_row)
+            
+            for row in reader:
+            
+                if float(row[1].replace('%','')) > 50.00:
+                    print(row)
+                    writer.writerow(row)
 
         self.driver.close()
 
