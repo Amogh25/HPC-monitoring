@@ -155,6 +155,7 @@ class TestKafka():
     fail_tests = data[data.tests2 > 0.500]
     print(Fore.RED,fail_tests[['Time','tests2']])
     print("")
+    print(Style.RESET_ALL)
 
     
 if __name__=="__main__":
