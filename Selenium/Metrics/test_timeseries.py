@@ -56,7 +56,7 @@ class TestGraph():
                 title = pan['title']
                 id = str(pan['id'])
                 title_list.append(pan['title'])
-                url="http://localhost:3000/d/"+dashboard_code+"/"+ dashboard_name +"?orgId=1&editPanel="+id+"&inspect="+id
+                url="http://localhost:3000/d/"+dashboard_code+"/"+ dashboard_name +"?orgId=1&editPanel="+id+"&from=now-"+time_interval+"&to=now&inspect="+id
                 time_series_list.append(url)
 
     print("Panels found")
