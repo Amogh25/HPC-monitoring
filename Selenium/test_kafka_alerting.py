@@ -32,7 +32,7 @@ class TestKafka():
   def url_generator(self):
     directory = "/home/sasha/projects/Selenium/json"
     file_list = os.listdir(directory)
-    json_files = [f for f in file_list if f.endswith('.json')]
+    json_files = [f for f in file_list if f.startswith('Kafka') and f.endswith('.json')]
     latest_file = max(json_files, key=lambda x: os.path.getmtime(os.path.join(directory, x)))
     filepath = os.path.join(directory, latest_file)
     print(filepath)
