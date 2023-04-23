@@ -17,7 +17,7 @@ class TestJSON():
   def setup_method(self):
     options=webdriver.ChromeOptions()
     options.add_argument("headless")
-    path = "/home/sasha/projects/Selenium/panel-data"
+    path = "/home/sasha/projects/Selenium/json"
     prefs = {"download.default_directory" : path }
     options.add_experimental_option("prefs",prefs)
     self.driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'),options=options)
@@ -27,8 +27,9 @@ class TestJSON():
     self.driver.quit()
 
   def json_fetch(self):
-    
-    self.driver.get("http://localhost:3000/d/rYdddlPW/node-exporter-full?orgId=1")
+    dashboard_code="rYdddlPW"
+    dashboard_name = "node-exporter-full"
+    self.driver.get("http://localhost:3000/d/"+dashboard_code+"/"+dashboard_name+"?orgId=1")
     time.sleep(8)
     self.driver.execute_script("window.scrollTo(0,0)")
     element = self.driver.find_element(By.XPATH, '/html/body/div/div[1]/main/div[3]/header/nav/div[1]/nav/div/div[2]/div')
@@ -44,8 +45,8 @@ class TestJSON():
     time.sleep(2)
 
   def test_login(self,url1):
-    usr="xxx"
-    pw="yyy"
+    usr="username"
+    pw="password"
     self.driver.get(url1)
     self.driver.set_window_size(1292, 638)
     self.driver.execute_script("window.scrollTo(0,0)")
