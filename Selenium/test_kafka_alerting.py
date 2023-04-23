@@ -172,7 +172,8 @@ if __name__=="__main__":
     try:
       test1.test_fetchpaneldata(i)
     except NoSuchElementException:
-      print("No Data")
+      print(Fore.RED , "Alert: No Data")
+      print(Style.RESET_ALL))
     else:
       end = time.time()
       print("File "+str(j)+" download complete")
