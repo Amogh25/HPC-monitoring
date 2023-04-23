@@ -176,8 +176,7 @@ if __name__=="__main__":
     print("Fetching file "+str(j))
     start = time.time()
     try:
-      a=9
-      #test1.test_fetchpaneldata(i)
+      test1.test_fetchpaneldata(i)
     except NoSuchElementException:
       print("No Data")
     else:
