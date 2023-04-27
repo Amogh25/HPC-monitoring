@@ -7,7 +7,7 @@ Prometheus installation
 -> sudo tar xvfz prometheus-version.linux-amd64.tar.gz
 
 3. Go to the extracted directory 
--> cd prometheus-version.linux-amd64.tar.gz
+-> cd prometheus-2.22.0
 
 Prometheus Setup
 
