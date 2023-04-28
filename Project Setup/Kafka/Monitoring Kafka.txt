@@ -1,0 +1,156 @@
+> Monitor Apache Kafka with Prometheus and Grafana:
+
+1.Setup Pre-requisites:
+a.Install and Configure Apache Kafka.
+b.Install Prometheus Server.
+c.Install Grafana.
+
+2.Download and install a Prometheus exporter so that we can pull Kafka’s metrics.
+- wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.17.2/jmx_prometheus_javaagent-0.17.2.jar
+
+After you have the JMX Exporter downloaded, we will proceed to copy it to Kafka’s lib directory where it stores its jar files. In our previous guide, we copied Kafka files into /usr/local/kafka-server/ directory. Therefore, we shall copy the jmx_prometheus_javaagent jar file to /usr/local/kafka-server/libs/.
+
+- sudo cp jmx_prometheus_javaagent-*.jar /usr/local/kafka-server/libs/jmx_prometheus_javaagent.jar
+
+3.Next, we will have to configure our JMX Exporter for it to know what it will extract from Kafka.
+- cd /usr/local/kafka-server/config/
+- sudo nano sample_jmx_exporter.yml
+
+a.Duplicate its contents in a file inside config directory within Kafka’s home directory.Copy the entire content given below including the hyphen:
+
+lowercaseOutputName: true
+
+rules:
+# Special cases and very specific rules
+- pattern : kafka.server<type=(.+), name=(.+), clientId=(.+), topic=(.+), partition=(.*)><>Value
+  name: kafka_server_$1_$2
+  type: GAUGE
+  labels:
+    clientId: "$3"
+    topic: "$4"
+    partition: "$5"
+- pattern : kafka.server<type=(.+), name=(.+), clientId=(.+), brokerHost=(.+), brokerPort=(.+)><>Value
+  name: kafka_server_$1_$2
+  type: GAUGE
+  labels:
+    clientId: "$3"
+    broker: "$4:$5"
+- pattern : kafka.coordinator.(\w+)<type=(.+), name=(.+)><>Value
+  name: kafka_coordinator_$1_$2_$3
+  type: GAUGE
+
+# Generic per-second counters with 0-2 key/value pairs
+- pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*, (.+)=(.+), (.+)=(.+)><>Count
+  name: kafka_$1_$2_$3_total
+  type: COUNTER
+  labels:
+    "$4": "$5"
+    "$6": "$7"
+- pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*, (.+)=(.+)><>Count
+  name: kafka_$1_$2_$3_total
+  type: COUNTER
+  labels:
+    "$4": "$5"
+- pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*><>Count
+  name: kafka_$1_$2_$3_total
+  type: COUNTER
+
+- pattern: kafka.server<type=(.+), client-id=(.+)><>([a-z-]+)
+  name: kafka_server_quota_$3
+  type: GAUGE
+  labels:
+    resource: "$1"
+    clientId: "$2"
+
+- pattern: kafka.server<type=(.+), user=(.+), client-id=(.+)><>([a-z-]+)
+  name: kafka_server_quota_$4
+  type: GAUGE
+  labels:
+    resource: "$1"
+    user: "$2"
+    clientId: "$3"
+
+# Generic gauges with 0-2 key/value pairs
+- pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>Value
+  name: kafka_$1_$2_$3
+  type: GAUGE
+  labels:
+    "$4": "$5"
+    "$6": "$7"
+- pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+)><>Value
+  name: kafka_$1_$2_$3
+  type: GAUGE
+  labels:
+    "$4": "$5"
+- pattern: kafka.(\w+)<type=(.+), name=(.+)><>Value
+  name: kafka_$1_$2_$3
+  type: GAUGE
+
+# Emulate Prometheus 'Summary' metrics for the exported 'Histogram's.
+# Note that these are missing the '_sum' metric!
+- pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>Count
+  name: kafka_$1_$2_$3_count
+  type: COUNTER
+  labels:
+    "$4": "$5"
+    "$6": "$7"
+- pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.*), (.+)=(.+)><>(\d+)thPercentile
+  name: kafka_$1_$2_$3
+  type: GAUGE
+  labels:
+    "$4": "$5"
+    "$6": "$7"
+    quantile: "0.$8"
+- pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+)><>Count
+  name: kafka_$1_$2_$3_count
+  type: COUNTER
+  labels:
+    "$4": "$5"
+- pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.*)><>(\d+)thPercentile
+  name: kafka_$1_$2_$3
+  type: GAUGE
+  labels:
+    "$4": "$5"
+    quantile: "0.$6"
+- pattern: kafka.(\w+)<type=(.+), name=(.+)><>Count
+  name: kafka_$1_$2_$3_count
+  type: COUNTER
+- pattern: kafka.(\w+)<type=(.+), name=(.+)><>(\d+)thPercentile
+  name: kafka_$1_$2_$3
+  type: GAUGE
+  labels:
+    quantile: "0.$4"
+
+4.Thus far we have everything that we need to start extracting Kafka metrics. The only thing remaining is to link the JMX exporter to our Kafka Broker.There are two ways to do so,select the one relevent to you:
+
+a.Open the Kafka Broker server start-up script and add the JMX configuration at the end of the file as shown below. All of the scripts are in the bin directory within Kafka’s home folder.
+- cd /usr/local/kafka-server/bin/
+- sudo vim kafka-server-start.sh
+
+After running the above command, add the following line at the last of the kafka-server-start.sh script:
+export KAFKA_OPTS=' -javaagent:/usr/local/kafka-server/libs/jmx_prometheus_javaagent-0.16.1.jar=7075:/usr/local/kafka-server/config/sample_jmx_exporter.yml'
+
+b.If you are using systemd, add the line to kafka’s systemd file under [Service] section as an Environment as shown below:
+Environment="KAFKA_OPTS=-javaagent:/usr/local/kafka-server/libs/jmx_prometheus_javaagent.jar=7075:/usr/local/kafka-server/config/sample_jmx_exporter.yml"
+
+After adding the line at the end of the kafka-server-start.sh script or in the systemd file, restart Kafka broker.
+- sudo systemctl restart kafka.service
+
+5.Add Kafka data to Prometheus:
+Log into your Prometheus server and lets configure this new source as a data target.
+- sudo vim /etc/prometheus/prometheus.yml
+
+Add the below content at the end of the yml file including the hyphen:
+ - job_name: 'kafka'
+   - targets: ['localhost:7071']
+
+6. Add Kafka metrics to Grafana:
+a.Once you are in the Grafana web interface, click on the settings gear icon then choose “Data Sources” option from the drop-down list.
+b.This will open the Data Sources Menu where you can add more. Click on “Add Data Source” tab
+c.Choose Prometheus since that is what we have already configured before.
+d.After picking Prometheus Data source, we will have to tell Grafana where to find Prometheus server. Issue a name and your IP and port where Prometheus is running next to url.
+e.You can further add the 'Scrape Interval', 'Query Timeout' and 'HTTP method'. After that, click on the “Save and Test” button. If all goes well, the green message should appear. In case of errors, make sure your Prometheus server is running and reachable. Open its port in case it is behind a firewall.
+f.After we are done adding the data source, we shall go on and add a dashboard that will visualize what is in the data source. While still on Grafana, click on the + button then select 'Import'.
+g.On the import page, issue the id 721 then click on “Load” button.
+h.The next page will ask you for a name, then you should pick the data source we added on the drop down at the bottom of the page. Once done, simply click on “Import“.
+i.Finally,the metrics will be displayed
