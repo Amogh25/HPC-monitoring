@@ -10,7 +10,7 @@ c.Install Grafana.
 
 After you have the JMX Exporter downloaded, we will proceed to copy it to Kafka’s lib directory where it stores its jar files. In our previous guide, we copied Kafka files into /usr/local/kafka-server/ directory. Therefore, we shall copy the jmx_prometheus_javaagent jar file to /usr/local/kafka-server/libs/.
 
-- sudo cp jmx_prometheus_javaagent-0.17.2.jar /usr/local/kafka-server/libs/jmx_prometheus_javaagent.jar
+- sudo cp jmx_prometheus_javaagent-0.17.2.jar /usr/local/kafka-server/kafka_2.12-3.4.0/libs/jmx_prometheus_javaagent.jar
 
 3.Next, we will have to configure our JMX Exporter for it to know what it will extract from Kafka.
 - cd /usr/local/kafka-server/config/
@@ -128,10 +128,10 @@ a.Open the Kafka Broker server start-up script and add the JMX configuration at 
 - sudo vim kafka-server-start.sh
 
 After running the above command, add the following line at the last of the kafka-server-start.sh script:
-export KAFKA_OPTS=' -javaagent:/usr/local/kafka-server/kafka-server/libs/jmx_prometheus_javaagent-0.17.2.jar=7075:/usr/local/kafka-server/config/sample_jmx_exporter.yml'
+export KAFKA_OPTS=' -javaagent:/usr/local/kafka-server/kafka-server/kafka_2.12-3.4.0/libs/jmx_prometheus_javaagent-0.17.2.jar=7071:/usr/local/kafka-server/config/sample_jmx_exporter.yml'
 
 b.If you are using systemd, add the line to kafka’s systemd file under [Service] section as an Environment as shown below:
-Environment="KAFKA_OPTS=-javaagent:/usr/local/kafka-server/libs/jmx_prometheus_javaagent.jar=7075:/usr/local/kafka-server/config/sample_jmx_exporter.yml"
+Environment="KAFKA_OPTS=-javaagent:/usr/local/kafka-server/kafka_2.12-3.4.0/libs/jmx_prometheus_javaagent.jar=7071:/usr/local/kafka-server/config/sample_jmx_exporter.yml"
 
 After adding the line at the end of the kafka-server-start.sh script or in the systemd file, restart Kafka broker.
 - sudo systemctl restart kafka.service
@@ -142,6 +142,7 @@ Log into your Prometheus server and lets configure this new source as a data tar
 
 Add the below content at the end of the yml file including the hyphen:
  - job_name: 'kafka'
+   static_configs:
    - targets: ['localhost:7071']
 
 6. Add Kafka metrics to Grafana:
