@@ -65,7 +65,7 @@ c.Reload the systemd daemon to apply new changes.
  - sudo systemctl status kafka 
 
 5.Create a Topic in Kafka:
-- cd /usr/local/kafka 
+- cd /usr/local/kafka-server/kafka_2.12-3.4.0
 - bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic testTopic 
 
 6.Send and Receive Messages in Kafka.
