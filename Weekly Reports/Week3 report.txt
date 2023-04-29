@@ -1,0 +1,11 @@
+Week 3 Progress:
+
+-We installed Prometheus,Node Exporter,Grafana and Apache Kafka on our linux systems.
+-All of us got our hands on experience on basics of Prometheus,Node Exporter,Grafana and Apache Kafka and how they work basically.
+-Troublshooting was done for all of the faults that occured during the installation on the above mentioned software applications.
+-We fetched the data from each Grafana panel in the form of a csv file.
+-We created an automation test using the panel url and retrieved the data for each panel.
+-Demonstration of the above mentioned tasks was done in the meeting.
+-Creation of Apache Kafka topic,producer and consumer was also demonstrated.
+-The metrics of the Apache Kafka was scraped by using Prometheus and JMX Exporter.
+-The same was visualised using Grafana by importing a dashboard with ID =721 and named Kafka Overview.

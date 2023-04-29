@@ -1,0 +1,37 @@
+Week 2 progress:
+
+Vishwadatta:
+-VM ware,ubuntu,fedora installed for system.
+-solved the issues related to installation of grafana to linux.
+-ran grafana and prometheus but no results were obtained.
+-ubuntu crashed due to unkown reason(yet to be solved).
+-installed grafana and set up admin and view only users in windows.
+-installed prometheus for windows and visualised some self metrices.
+-installed windows exporter and configured yml file for setting Windows expoter as target.
+-set up a cpu related metrics dashboard.
+
+Bhargavi:
+-Installed VMWare, Ubuntu and Fedora successfully on laptop
+-Worked on Selenium IDE to automate the tests and extract the code
+-Worked on Selenium Automation without opening the browser.
+
+Amogh:
+-Learnt about Prometheus and Node Server
+-Installed VMWare, Ubuntu and Fedora successfully on laptop
+-Installed Prometheus on Ubuntu
+-A Prometheus command was run to check the metrics, status and graph on localhost.
+
+Sakshya:
+-Learnt how to automate a web browser with selenium
+-Using Selenium IDE learnt to record and playback web interactions by auto generating code
+-Learnt to operate a headless browser
+-Got familiar working with Ubuntu
+
+Brinda:
+-Gained an understanding about kafka.
+-Installed VMWare,Ubuntu and Fedora to the system.
+-Successfully installed Kafka on Ubuntu.
+-Tried to start the kafka zoookeeper but failed.
+-Working to overcome the failure(i.e. trying to start the kafka zookeeper).  
+
+

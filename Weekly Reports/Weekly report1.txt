@@ -1,0 +1,12 @@
+Week1 Progress:
+>Firstly, there was a brief understanding of the project-HPC MONITORING
+>Access to Google Cloud Platform(GCP) was gained.
+>Undersatnding about the services that are going to be used in the GCP was gained.
+>A GitHub repository was created by Amogh for storing the project essentials.
+>Each team member took up a task.
+>Vishwadatta gave a brief about how grafana is going to be used in the project.
+>Amogh shared information on how prometheus and node exporter's contribution in the project.
+>Brinda explained the role of Kafka in the project.
+>Bhargavi and Sakshya showed how selenium is used to automate a process by demonstrating a auto login code to GitHub.
+>Lastly,discussion about what could be the possible deliverables.
+
