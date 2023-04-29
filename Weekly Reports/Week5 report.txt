@@ -1,0 +1,8 @@
+Week 5 progress:
+
+-Firstly,the doubts regarding the Selenium tests for acceptance criteria were discussed.
+-Then,Kafka producer that publishes a topic by reading the pcm alerts text file passed to it was created along with console consumer.
+-The same was demonstrated in the meeting.
+-The Project Status and Minimum Viable Product preparation was discussed.
+-The tasks for the next week were assigned.
+-Lastly,preparation for the presentation of the project was asked to be done.
