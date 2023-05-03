@@ -36,7 +36,7 @@ class TestKafka():
   
 
   def url_generator(self):
-    directory = "/home/sasha/projects/Selenium/json"
+    directory = "/json"
     file_list = os.listdir(directory)
     json_files = [f for f in file_list if f.startswith('Kafka') and f.endswith('.json')]
     latest_file = max(json_files, key=lambda x: os.path.getmtime(os.path.join(directory, x)))
@@ -72,8 +72,8 @@ class TestKafka():
 
 
   def test_login(self,url1):
-    usr="admin"
-    pw="Rockwood0542@"
+    usr="username"
+    pw="password"
     self.driver.get(url1)
     self.driver.set_window_size(1292, 638)
     self.driver.execute_script("window.scrollTo(0,0)")
