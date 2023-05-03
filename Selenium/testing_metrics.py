@@ -17,6 +17,7 @@ from colorama import Fore,Style
 
 
 class TestKafka():
+  #Select the panels you want to test
   metrics = ['PDU_Power','Sensors_Node']
   def setup_method(self):
     options=webdriver.ChromeOptions()
