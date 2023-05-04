@@ -1,6 +1,6 @@
-import json
 import time
 import pandas as pd
+import json
 import os
 import argparse
 from selenium import webdriver
@@ -17,15 +17,14 @@ from colorama import Fore,Style
 
 
 class TestKafka():
-  #Select the panels you want to test
   metrics = ['PDU_Power','Sensors_Node']
   def setup_method(self):
     options=webdriver.ChromeOptions()
-    options.add_argument("headless")
-    path = "panel-data/"
+    options.add_argument('headless')
+    path = os.path.abspath("panel-data")
     options.add_experimental_option('prefs', {
     'download.default_directory': path,
-    'download.prompt_for_download': False,
+    'download.prompt_for_download': True,
     'download.directory_upgrade': True,
     'safebrowsing.enabled': True
 })
@@ -37,7 +36,7 @@ class TestKafka():
   
 
   def url_generator(self):
-    directory = "/json"
+    directory = "json"
     file_list = os.listdir(directory)
     json_files = [f for f in file_list if f.startswith('Kafka') and f.endswith('.json')]
     latest_file = max(json_files, key=lambda x: os.path.getmtime(os.path.join(directory, x)))
@@ -73,8 +72,8 @@ class TestKafka():
 
 
   def test_login(self,url1):
-    usr="username"
-    pw="password"
+    usr="admin"
+    pw="Rockwood0542@"
     self.driver.get(url1)
     self.driver.set_window_size(1292, 638)
     self.driver.execute_script("window.scrollTo(0,0)")
@@ -88,21 +87,21 @@ class TestKafka():
 
     self.driver.execute_script("window.scrollTo(0,0)")
     self.driver.get(url2)
-    time.sleep(2)
+    time.sleep(5)
     self.driver.execute_script("window.scrollTo(0,0)")
     element = self.driver.find_element(By.XPATH, "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[1]/div[1]/div")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).perform()
     self.driver.find_element(By.XPATH, "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[1]/div[1]/div/div").click()
     self.driver.execute_script("window.scrollTo(0,0)")
-    time.sleep(3)
+    time.sleep(5)
     try:
       element = self.driver.find_element(By.XPATH, "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div[2]/div")
       actions = ActionChains(self.driver)
       actions.move_to_element(element).perform()
       self.driver.find_element(By.XPATH, "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div[2]/div").click()
       self.driver.execute_script("window.scrollTo(0,0)")
-      time.sleep(3)
+      time.sleep(5)
       element = self.driver.find_element(By.XPATH, "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div[1]/div[2]/input")
       actions = ActionChains(self.driver)
       actions.move_to_element(element).perform()
@@ -112,7 +111,7 @@ class TestKafka():
       self.driver.execute_script("window.scrollTo(0,0)")
       time.sleep(3)
     except NoSuchElementException:
-      a=9
+      pass
 
     finally:
       element = self.driver.find_element(By.XPATH, "/html/body/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/div/div[1]/button")
@@ -123,40 +122,65 @@ class TestKafka():
 
   def acceptance(self,title):
 
+    panels = dict()
+    panels['title'] = title
+    topic = title.lower()
+    panels['topic'] = topic
+
+    directory = "panel-data/"
+    files = [f for f in os.listdir(directory) if f.startswith(title) and f.endswith(".csv")]
+    latest_file = max(files, key=lambda x: os.path.getmtime(os.path.join(directory, x)))
+    data_file = os.path.join(directory,latest_file)
+    data = pd.read_csv(data_file)
+
+    standard_deviation = data[topic].std()
+    mean = data[topic].mean()
+
+    print("\nMean value of "+title+" :"+ str(mean))
+    print("Standard Deviation of "+title+" :"+ str(standard_deviation)+"\n")
+
+    acceptance_criteria = mean-standard_deviation
+    print("Acceptance Criteria for " +title+ " :" +str(acceptance_criteria)+"\n")
+
+    panels['acceptance_criteria'] = acceptance_criteria
+
     filepath = "metrics/config1.json"
     with open(filepath,"r") as f:
       file = json.load(f)
-      data = dict()
-      data['title'] = title
-      data['topic'] = title.lower()
-      data['threshold'] = int(input("Enter acceptance criteria for " + title +" :"))
-      file['panels'].append(data)
+      file['panels'].append(panels)
     with open(filepath,"w") as f:
       json.dump(file,f)
 
   def test_alerting(self,title):
+
     with open("metrics/config1.json","r") as f:
       accept = json.load(f)
 
     for panel in accept['panels']:
       if panel['title'] == title:
-        threshold = panel['threshold']
         topic = panel['topic']
+        acceptance_criteria = panel['acceptance_criteria']
     
     directory = "panel-data/"
     files = [f for f in os.listdir(directory) if f.startswith(title) and f.endswith(".csv")]
     latest_file = max(files, key=lambda x: os.path.getmtime(os.path.join(directory, x)))
     data_file = os.path.join(directory,latest_file)
     data = pd.read_csv(data_file)
-    print(Fore.RED , "ALERT:")
-    fail_tests = data.loc[data[topic] < threshold]
-    print(Fore.RED,fail_tests[['Time',topic]])
-    print(Style.RESET_ALL)
-    print("")
-    directory = "alert/"
-    file_name = topic +".csv"
-    file_path = os.path.join(directory,file_name)
-    fail_tests.to_csv(file_path,index=False)
+    
+    
+    fail_tests = data.loc[data[topic] < acceptance_criteria]
+    if len(fail_tests) != 0:
+      print(Fore.RED , "ALERT:")
+      print(Fore.RED,fail_tests[['Time',topic]])
+      print(Style.RESET_ALL)
+      print("")
+      directory = "alert/"
+      file_name = topic +".csv"
+      file_path = os.path.join(directory,file_name)
+      fail_tests.to_csv(file_path,index=False)
+    else:
+      print(Style.RESET_ALL)
+      print("All tests have passed the acceptance criteria")
 
     
     
@@ -180,7 +204,10 @@ if __name__ =="__main__":
         print(Style.RESET_ALL)
       else:
         end = time.time()
-        print("File "+str(j)+" download complete")
+        directory = "panel-data/"
+        files = [f for f in os.listdir(directory) if f.startswith(title_list[i]) and f.endswith(".csv")]
+        latest_file = max(files, key=lambda x: os.path.getmtime(os.path.join(directory, x)))
+        print("File "+ latest_file+" download complete")
         print(f"Time taken : {(end - start):.03f}s")
         j=j+1
   with open("metrics/config1.json","w") as f:
