@@ -17,6 +17,7 @@ from colorama import Fore,Style
 
 
 class TestKafka():
+  #Enter the titles of the panels you would want to fetch the metrics from
   metrics = ['PDU_Power','Sensors_Node']
   def setup_method(self):
     options=webdriver.ChromeOptions()
@@ -72,8 +73,10 @@ class TestKafka():
 
 
   def test_login(self,url1):
-    usr="admin"
-    pw="Rockwood0542@"
+    #Enter username
+    usr="username" 
+    #Enter password
+    pw="password"
     self.driver.get(url1)
     self.driver.set_window_size(1292, 638)
     self.driver.execute_script("window.scrollTo(0,0)")
