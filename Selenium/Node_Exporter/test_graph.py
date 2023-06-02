@@ -39,8 +39,8 @@ class TestGraph():
     data = json.load(open(filepath))
     print("JSON file loaded")
   
-    dashboard_code="GYYoBhsVk"
-    dashboard_name = "kafka-overview"
+    dashboard_code="rYdddlPW"
+    dashboard_name = "node-exporter-full"
     time_interval = "5m"
     refresh_time = "5s"
     title_list=[]
