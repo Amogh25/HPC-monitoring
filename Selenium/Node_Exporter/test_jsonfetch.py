@@ -17,7 +17,7 @@ class TestJSON():
   def setup_method(self):
     options=webdriver.ChromeOptions()
     options.add_argument("headless")
-    path = "/home/sasha/projects/Selenium/json"
+    path = "json/"
     prefs = {"download.default_directory" : path }
     options.add_experimental_option("prefs",prefs)
     self.driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'),options=options)
@@ -45,14 +45,14 @@ class TestJSON():
     time.sleep(2)
 
   def test_login(self,url1):
-    usr="username"
-    pw="password"
+    user="username"
+    password="password"
     self.driver.get(url1)
     self.driver.set_window_size(1292, 638)
     self.driver.execute_script("window.scrollTo(0,0)")
-    self.driver.find_element(By.NAME, "user").send_keys(usr)
+    self.driver.find_element(By.NAME, "user").send_keys(user)
     self.driver.find_element(By.ID, "current-password").click()
-    self.driver.find_element(By.ID, "current-password").send_keys(pw)
+    self.driver.find_element(By.ID, "current-password").send_keys(password)
     self.driver.find_element(By.XPATH, "/html/body/div/div[1]/main/div[3]/div/div[2]/div/div/form/button").click()
     time.sleep(5)
     
