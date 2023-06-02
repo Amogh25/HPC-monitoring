@@ -39,8 +39,8 @@ class TestStat():
     data = json.load(open(filepath))
     print("JSON file loaded")
   
-    dashboard_code="rYdddlPW"
-    dashboard_name = "node-exporter-full"
+    dashboard_code="GYYoBhsVk"
+    dashboard_name = "kafka-overview"
     time_interval = "5m"
     refresh_time = "5s"
     title_list=[]
